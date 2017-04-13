@@ -1,0 +1,112 @@
+package algopackage;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+/**
+ * This class implements the chain matrix multiplication algorithm with the help of dynamic programming.
+ * 
+ * @author pdwankhe
+ *
+ */
+public class ChainMatrixMultiplication {
+	
+	static int s[][];
+	
+	public ChainMatrixMultiplication() {
+	}
+	
+	static void chainMatrixMultiplication(int[] p) {
+		boolean isFirst = false;
+		int n = p.length-1;
+		int m[][] = new int[n][n];
+		s = new int[n][n];
+		for (int c = 0; c < n; c++) 
+			m[c][c] = 0; 
+		for (int counter = 1; counter < n; counter++) {
+			for (int i = 0;i < n; i++) {
+				isFirst = false;
+				int j = i + counter;
+				for (int k = i; k < j && j < n; k++) {
+					int result = m[i][k] + m[k+1][j] + p[i] * p[k+1] * p[j+1];
+					if (!isFirst) {
+						m[i][j] = result;
+						s[i][j] = k;
+						isFirst = true;
+					} else if (m[i][j] > result) {
+						m[i][j] = result;
+						s[i][j] = k;
+					}
+				}
+			}
+		}
+	}
+	
+	static int[][] matrixMultiply(List<Matrix> matrices, int s[][], int i ,int j) {
+		if (i ==j) return matrices.get(i).getMatrix();
+		 else {
+			 int k = s[i][j];
+			int[][] x = matrixMultiply(matrices, s, i, k);
+			int[][] y = matrixMultiply(matrices, s, k+1, j);
+			 return mult(x,y);
+        }
+	}
+	
+	static int[][] mult(int[][] x, int[][] y) {
+		int [][] result = new int[x.length][y[0].length];
+
+		/* Loop through each and get product, then sum up and store the value */
+		for (int i = 0; i < x.length; i++) { 
+		    for (int j = 0; j < y[0].length; j++) { 
+		        for (int k = 0; k < x[0].length; k++) { 
+		            result[i][j] += x[i][k] * y[k][j];
+		        }
+		    }
+		}
+		
+		return result;
+	}
+	
+	public static void main(String[] args) {
+		int p[] = {5,4,6,2};
+		List<Matrix> matrices = new ArrayList<Matrix>();
+		Matrix m1 = new Matrix(5,4);
+		int arr[] = {1,2,40,2,3,29,10,21,11,120,23,90,24,12,11,1,11,45,23,21};
+		m1.addElementsToMatrix(5, 4, arr);
+		Matrix m2 = new Matrix(4,6);
+		int arr1[] = {1,1,1,2,3,12,12,3,10,12,12,29,22,11,22,11,11,11,13,1,2,12,4,2};
+		m2.addElementsToMatrix(4, 6, arr1);
+		Matrix m3 = new Matrix(6,2);
+		int arr2[] = {1,1,12,3,22,11,13,1,2,12,12,12};
+		m3.addElementsToMatrix(6, 2, arr2);
+		matrices.add(m1);
+		matrices.add(m2);
+		matrices.add(m3);
+		chainMatrixMultiplication(p);
+		int[][] result = matrixMultiply(matrices,s,0,2);
+		System.out.println(Arrays.toString(result));
+	}
+
+}
+
+class Matrix {
+	
+	   private final int[][] matrix;
+	
+	   public Matrix(int rows, int cols) {
+	        this.matrix = new int[rows][cols];
+	   }
+	   
+	   public void addElementsToMatrix(int rows, int cols, int[] arr) {
+		   int counter = 0;
+		   for (int i = 0; i < rows; i++) {
+			   for (int j = 0; j < cols; j++) {
+				   matrix[i][j] = arr[counter++];
+			   }
+		   }
+			   
+	   }
+	   
+	   public int[][] getMatrix() {
+		   return matrix;
+	   }
+}
