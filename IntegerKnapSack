@@ -1,0 +1,50 @@
+package DynamicProgramming;
+
+public class IntegerKnapSack {
+	
+	public IntegerKnapSack() {
+	}
+	
+	static void computeTable(int[] weights, int[] values, int wt) {
+		int table[][] = new int[values.length+1][wt+1];
+		int keep[][] = new int[values.length+1][wt+1];
+		for (int i = 0; i <= values.length; i++) {
+			for (int j = 0; j <=  wt; j++) {
+				if (i == 0 || j == 0) 
+					table[i][j] = 0;
+				else if (weights[i-1] <= j) {
+					table[i][j] = max(values[i-1] + table[i-1][j-weights[i-1]], table[i-1][j]);
+					if (table[i][j] == values[i-1] + table[i-1][j-weights[i-1]])
+						keep[i][j] = 1;
+					else
+						keep[i][j] = 0;
+				} else {
+					table[i][j] = table[i-1][j];
+					keep[i][j] = 0;
+				}
+			}
+		}
+		int k = wt;
+		for (int i = values.length; i >0; i--) {
+			if (keep[i][k] == 1) {
+				System.out.println("Add Item :- " + i + " with value and weight to knapsack " + values[i-1] + " " + weights[i-1]);
+				k -= weights[i-1];
+			}
+		}
+	}
+	
+	private static int max(int a, int b) {
+		if (a > b) {
+			return a;
+		} else {
+			return b;
+		}
+	}
+	
+	public static void main(String[] args) {
+		int[] weights = {3,2,1};
+		int[] values = {5,3,4};
+		computeTable(weights,values,5);
+	}
+
+}
