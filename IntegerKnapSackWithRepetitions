@@ -1,0 +1,62 @@
+package DynamicProgramming;
+
+import java.util.Arrays;
+
+public class IntegerKnapSackWithRepetitions {
+
+	public IntegerKnapSackWithRepetitions() {
+	}
+	static void calculateIntegerKnapSackWithDuplicate(int[] values, int[] weights,
+			int wt) {
+		int table[] = new int[wt+1];
+		int b[] = new int[wt+1];
+		
+		int mark = 0;
+		
+		for (int j = 1; j <= wt; j++) {
+			int max1 = table[j-1];
+			int max2 = Integer.MIN_VALUE;
+			for (int i = 1; i <= values.length; i++) {
+				if ((j - weights[i-1] >= 0)) {
+					if ( max2 < (values[i-1] + table[j-weights[i-1]])) {
+						max2 = values[i-1] + table[j-weights[i-1]];
+						 mark = j - weights[i-1];
+					}
+				}
+			}
+			
+			if (max1 > max2) {
+				table[j] = max1;
+				b[j] = b[j-1];
+			} else {
+				table[j] = max2;
+				b[j] = mark;
+			}
+		}
+		
+		printPosition(b, wt);
+		
+		System.out.println(Arrays.toString(table));
+	}
+	
+	static void printPosition(int[] b, int j) {
+		if (j == 0) {
+			return;
+		} else {
+			 //Print (j) value  
+	        System.out.println("Position = "+ j);  
+	  
+	        //Call the function using the  
+	        //previous (j) position stored  
+	        //in b[j]  
+	        printPosition(b, b[j]);  
+		}
+	}
+	
+	public static void main(String[] args) {
+		int[] values = {5,3,4};
+		int[] weights = {3,2,1};
+		calculateIntegerKnapSackWithDuplicate(values, weights, 5);
+	}
+
+}
